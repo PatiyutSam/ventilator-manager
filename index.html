@@ -5,17 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ระบบบริหารจัดการเครื่องช่วยหายใจ</title>
     
-    <!-- นำเข้าฟอนต์ Prompt จาก Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
-        /* กฎสี 60-30-10 */
         :root {
-            --color-cream: #FDFBF7; /* 60% พื้นหลัง */
-            --color-blue: #4A90E2;  /* 30% สีหลัก */
-            --color-red: #E74C3C;   /* 10% จุดเด่น/เตือน */
+            --color-cream: #FDFBF7; 
+            --color-blue: #4A90E2;  
+            --color-red: #E74C3C;   
             --text-dark: #333333;
         }
 
@@ -27,7 +25,6 @@
             padding: 30px;
         }
 
-        /* ส่วนหัวและโลโก้ */
         .header-container {
             display: flex;
             align-items: center;
@@ -39,79 +36,48 @@
             border-top: 5px solid var(--color-blue);
         }
 
-        .hospital-logo {
-            width: 80px;
-            height: 80px;
-            object-fit: contain;
-            margin-right: 20px;
-        }
+        .hospital-logo { width: 80px; height: 80px; object-fit: contain; margin-right: 20px; }
 
         h1 { color: var(--color-blue); margin: 0; font-size: 28px; font-weight: 600; }
         h2 { color: var(--color-blue); margin-top: 40px; margin-bottom: 15px; font-size: 20px; border-left: 5px solid var(--color-blue); padding-left: 10px; }
-        
         .section-red h2 { color: var(--color-red); border-left-color: var(--color-red); }
 
-        /* การตกแต่งตาราง */
-        .table-responsive {
-            overflow-x: auto;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 700px;
-        }
-
-        th, td {
-            padding: 15px;
-            text-align: left;
-            border-bottom: 1px solid #EEEEEE;
-        }
-
-        th {
-            background-color: var(--color-blue);
-            color: white;
-            font-weight: 500;
-            white-space: nowrap;
-        }
-
+        .table-responsive { overflow-x: auto; background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        table { width: 100%; border-collapse: collapse; min-width: 700px; }
+        th, td { padding: 15px; text-align: left; border-bottom: 1px solid #EEEEEE; vertical-align: middle; }
+        th { background-color: var(--color-blue); color: white; font-weight: 500; white-space: nowrap; }
         .table-red th { background-color: var(--color-red); }
-
         tr:hover { background-color: #F8F9FA; }
         
-        .urgent-row { background-color: #FFF3F2; } /* ไฮไลท์สีแดงอ่อนสำหรับเครื่องที่ต้องชาร์จด่วน */
+        .urgent-row { background-color: #FFF3F2; } 
         .urgent-row:hover { background-color: #FCE8E6; }
 
-        /* ป้ายแจ้งเตือน */
-        .badge-red {
-            background-color: var(--color-red);
-            color: white;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.85em;
-            font-weight: 500;
-        }
-
-        .badge-blue {
-            background-color: var(--color-blue);
-            color: white;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.85em;
-            font-weight: 500;
-        }
+        .badge-red { background-color: var(--color-red); color: white; padding: 5px 12px; border-radius: 20px; font-size: 0.85em; font-weight: 500; }
         
         .text-center { text-align: center; }
+
+        /* ตกแต่งปุ่มกด */
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Prompt', sans-serif;
+            font-weight: 500;
+            font-size: 0.9em;
+            transition: 0.2s;
+        }
+        .btn-use { background-color: var(--color-blue); color: white; }
+        .btn-use:hover { background-color: #357ABD; }
+        .btn-charge { background-color: white; color: var(--color-red); border: 1px solid var(--color-red); }
+        .btn-charge:hover { background-color: var(--color-red); color: white; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
     </style>
 </head>
 <body>
 
     <div class="header-container">
-        <!-- ⭐️ เปลี่ยนลิงก์รูปภาพในช่อง src="..." ด้านล่างนี้เป็นรูปโลโก้โรงพยาบาลของคุณ -->
-        <img src="https://lh3.googleusercontent.com/d/1DlsLtw43ZhgFrmvjS6ySFH4EmSwuS0tk" alt="โลโก้โรงพยาบาล" class="hospital-logo" id="logo">
+        <img src="https://cdn-icons-png.flaticon.com/512/3588/3588102.png" alt="โลโก้" class="hospital-logo" id="logo">
         <div>
             <h1>ระบบบริหารจัดการเครื่องช่วยหายใจ</h1>
             <p style="margin: 5px 0 0 0; color: #666;">ศูนย์เครื่องมือแพทย์ (ระบบหมุนเวียนและกระตุ้นแบตเตอรี่)</p>
@@ -124,11 +90,11 @@
             <table>
                 <thead>
                     <tr>
-                        <th width="10%" class="text-center">ลำดับใช้งาน</th>
+                        <th width="10%" class="text-center">ลำดับ</th>
                         <th width="20%">เลขครุภัณฑ์</th>
-                        <th width="20%">Serial Number</th>
-                        <th width="15%" class="text-center">สถานะ</th>
-                        <th width="35%">ชั่วโมงการใช้งาน (ชม.)</th>
+                        <th width="15%">ชั่วโมงใช้งาน</th>
+                        <th width="30%">วันที่ใช้งานล่าสุด</th>
+                        <th width="25%" class="text-center">การจัดการ</th>
                     </tr>
                 </thead>
                 <tbody id="use-list">
@@ -139,74 +105,84 @@
     </div>
 
     <div class="section-red">
-        <h2>🔴 ลำดับที่ต้องชาร์จกระตุ้นแบตเตอรี่ (เรียงตามเครื่องที่ไม่ได้ชาร์จนานที่สุด)</h2>
+        <h2>🔴 ลำดับที่ต้องชาร์จกระตุ้นแบตเตอรี่ (ไม่ได้ชาร์จนานที่สุด)</h2>
         <div class="table-responsive">
             <table class="table-red">
                 <thead>
                     <tr>
-                        <th width="10%" class="text-center">ลำดับชาร์จ</th>
+                        <th width="10%" class="text-center">ลำดับ</th>
                         <th width="20%">เลขครุภัณฑ์</th>
-                        <th width="20%">Serial Number</th>
-                        <th width="15%">วันที่ชาร์จล่าสุด</th>
-                        <th width="20%">ไม่ได้ชาร์จมาแล้ว (วัน)</th>
-                        <th width="15%" class="text-center">ข้อแนะนำ</th>
+                        <th width="20%">วันที่ชาร์จล่าสุด</th>
+                        <th width="25%">ไม่ได้ชาร์จมาแล้ว (วัน)</th>
+                        <th width="25%" class="text-center">การจัดการ</th>
                     </tr>
                 </thead>
                 <tbody id="charge-list">
-                    <tr><td colspan="6" class="text-center">กำลังโหลดข้อมูล...</td></tr>
+                    <tr><td colspan="5" class="text-center">กำลังโหลดข้อมูล...</td></tr>
                 </tbody>
             </table>
         </div>
     </div>
 
     <script>
-        // ⭐️ อย่าลืมนำ API URL จาก Google Sheets มาวางตรงนี้ครับ ⭐️
+        // ⭐️ เปลี่ยนเป็น API URL ของคุณ ⭐️
         const API_URL = 'https://script.google.com/macros/s/AKfycbxUISoKM4RLt5T9dnjN86-Q5WCEbytq5GhHJArvP3Azv0FhhYemSYvi9IbU6cVd2-R3Lw/exec';
 
         async function fetchData() {
             try {
-                const response = await fetch(API_URL);
+                // เติมพารามิเตอร์ป้องกันการจำข้อมูลเก่า (Cache)
+                const response = await fetch(API_URL + "?t=" + new Date().getTime());
                 const data = await response.json();
                 processData(data);
             } catch (error) {
                 console.error("Error:", error);
-                document.getElementById('use-list').innerHTML = "<tr><td colspan='5' class='text-center' style='color:red;'>ไม่สามารถเชื่อมต่อฐานข้อมูลได้ กรุณาตรวจสอบ API URL</td></tr>";
-                document.getElementById('charge-list').innerHTML = "<tr><td colspan='6' class='text-center' style='color:red;'>ไม่สามารถเชื่อมต่อฐานข้อมูลได้ กรุณาตรวจสอบ API URL</td></tr>";
             }
         }
 
-        // ฟังก์ชันคำนวณจำนวนวันที่ผ่านมานับจากวันที่ชาร์จล่าสุด
+        // ฟังก์ชันเมื่อผู้ใช้กดปุ่ม
+        async function actionUpdate(assetId, actionType, buttonElement) {
+            // ป้องกันการกดซ้ำซ้อน
+            const originalText = buttonElement.innerText;
+            buttonElement.innerText = "กำลังบันทึก...";
+            buttonElement.disabled = true;
+
+            try {
+                // ส่งคำสั่งไปที่ Google Sheets (แนบ action และ id ไปกับ URL)
+                const targetUrl = `${API_URL}?action=${actionType}&id=${assetId}`;
+                await fetch(targetUrl);
+                
+                // เมื่อเสร็จแล้ว ให้ดึงข้อมูลมาแสดงใหม่ทั้งหมด
+                await fetchData();
+            } catch (error) {
+                alert("เกิดข้อผิดพลาดในการบันทึกข้อมูล กรุณาลองใหม่");
+                buttonElement.innerText = originalText;
+                buttonElement.disabled = false;
+            }
+        }
+
         function getDaysSince(dateString) {
-            if (!dateString) return 9999; // ถ้าไม่มีข้อมูลวันที่ ให้ตีความว่านานมาก เพื่อให้โผล่ขึ้นมาเป็นอันดับแรกๆ
+            if (!dateString) return 9999;
             const targetDate = new Date(dateString);
             if (isNaN(targetDate)) return 9999;
-            
             const today = new Date();
-            // รีเซ็ตเวลาให้เป็นเที่ยงคืนตรง เพื่อหาผลต่างเฉพาะ "วัน"
             today.setHours(0,0,0,0);
             targetDate.setHours(0,0,0,0);
-            
             const diffTime = today - targetDate;
             const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
             return diffDays > 0 ? diffDays : 0;
         }
 
-        // ฟังก์ชันแปลงวันที่ให้สวยงามแบบไทย
         function formatDate(dateString) {
-            if (!dateString) return "ไม่มีข้อมูล";
+            if (!dateString) return "-";
             const d = new Date(dateString);
             if (isNaN(d)) return dateString;
             return d.toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric' });
         }
 
         function processData(data) {
-            // กรองเอาเฉพาะเครื่องที่ว่าง (Ready)
             const readyMachines = data.filter(m => m.Status === 'Ready' || m.Status === '');
 
-            // 1. เรียงสำหรับใช้งาน (ชั่วโมงใช้งานจากน้อยไปมาก)
             const useFirst = [...readyMachines].sort((a, b) => (Number(a.UsageHours) || 0) - (Number(b.UsageHours) || 0));
-            
-            // 2. เรียงสำหรับชาร์จแบต (คำนวณจำนวนวัน และเรียงจากมากไปน้อย)
             const chargeData = readyMachines.map(m => ({ ...m, daysSinceCharge: getDaysSince(m.LastCharged) }));
             const chargeFirst = chargeData.sort((a, b) => b.daysSinceCharge - a.daysSinceCharge);
 
@@ -219,18 +195,21 @@
             tbody.innerHTML = '';
             
             if(items.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" class="text-center">ไม่มีเครื่องช่วยหายใจที่พร้อมใช้งานในขณะนี้</td></tr>';
-                return;
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center">ไม่มีข้อมูล</td></tr>'; return;
             }
 
             items.forEach((item, index) => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td class="text-center"><strong>${index + 1}</strong></td>
-                    <td><strong>${item.AssetID || '-'}</strong></td>
-                    <td>${item.SerialNumber || '-'}</td>
-                    <td class="text-center"><span class="badge-blue">พร้อมใช้</span></td>
-                    <td>${item.UsageHours || 0} ชั่วโมง</td>
+                    <td><strong>${item.AssetID || '-'}</strong><br><small style="color:#888;">SN: ${item.SerialNumber || '-'}</small></td>
+                    <td>${item.UsageHours || 0} ชม.</td>
+                    <td>${formatDate(item.StartDate)}</td>
+                    <td class="text-center">
+                        <button class="btn btn-use" onclick="actionUpdate('${item.AssetID}', 'use', this)">
+                            นำไปใช้งานวันนี้
+                        </button>
+                    </td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -241,34 +220,32 @@
             tbody.innerHTML = '';
             
             if(items.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" class="text-center">ไม่มีเครื่องช่วยหายใจในระบบ</td></tr>';
-                return;
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center">ไม่มีข้อมูล</td></tr>'; return;
             }
 
             items.forEach((item, index) => {
-                // ถ้าเป็น 3 อันดับแรก และไม่ได้ชาร์จมาเกิน 1 วัน จะถือว่าต้องชาร์จด่วน
                 const isUrgent = index < 3 && item.daysSinceCharge > 0 && item.daysSinceCharge !== 9999; 
-                
                 const tr = document.createElement('tr');
                 if(isUrgent) tr.className = 'urgent-row';
-                
                 let daysText = item.daysSinceCharge === 9999 ? "ไม่มีประวัติ" : `${item.daysSinceCharge} วัน`;
 
                 tr.innerHTML = `
                     <td class="text-center"><strong>${index + 1}</strong></td>
-                    <td><strong>${item.AssetID || '-'}</strong></td>
-                    <td>${item.SerialNumber || '-'}</td>
+                    <td><strong>${item.AssetID || '-'}</strong><br><small style="color:#888;">SN: ${item.SerialNumber || '-'}</small></td>
                     <td>${formatDate(item.LastCharged)}</td>
                     <td style="color:${isUrgent ? 'var(--color-red)' : 'inherit'}; font-weight:${isUrgent ? '600' : 'normal'}">
-                        ${daysText}
+                        ${daysText} ${isUrgent ? '<span class="badge-red" style="margin-left:10px;">ด่วน</span>' : ''}
                     </td>
-                    <td class="text-center">${isUrgent ? '<span class="badge-red">ควรชาร์จด่วน</span>' : '-'}</td>
+                    <td class="text-center">
+                        <button class="btn btn-charge" onclick="actionUpdate('${item.AssetID}', 'charge', this)">
+                            เสียบชาร์จวันนี้
+                        </button>
+                    </td>
                 `;
                 tbody.appendChild(tr);
             });
         }
 
-        // เริ่มดึงข้อมูลเมื่อเปิดหน้าเว็บ
         fetchData();
     </script>
 </body>
