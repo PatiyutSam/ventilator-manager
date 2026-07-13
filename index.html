@@ -10,8 +10,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
-        :root { --color-cream: #FDFBF7; --color-blue: #4A90E2; --color-red: #E74C3C; --text-dark: #333333; }
-        body { font-family: 'Prompt', sans-serif; background-color: var(--color-cream); color: var(--text-dark); margin: 0; padding: 30px; }
+        :root { var(--color-cream): #FDFBF7; --color-blue: #4A90E2; --color-red: #E74C3C; --text-dark: #333333; }
+        body { font-family: 'Prompt', sans-serif; background-color: #FDFBF7; color: var(--text-dark); margin: 0; padding: 30px; }
 
         .header-container { display: flex; align-items: center; margin-bottom: 20px; background-color: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-top: 5px solid var(--color-blue); }
         .hospital-logo { width: 80px; height: 80px; object-fit: contain; margin-right: 20px; }
@@ -43,7 +43,7 @@
         .status-broken { background-color: #34495E; color: white; }
         
         .text-center { text-align: center; }
-        .info-text { color: #666; font-size: 0.85em; margin-top: 4px; display: block; }
+        .info-text { color: #555; font-size: 0.85em; margin-top: 4px; display: block; }
 
         .action-flex { display: flex; align-items: center; gap: 8px; justify-content: center; }
         .date-input { font-family: 'Prompt', sans-serif; padding: 6px; border: 1px solid #CCCCCC; border-radius: 4px; font-size: 0.9em; }
@@ -51,12 +51,12 @@
         .btn { padding: 7px 14px; border: none; border-radius: 6px; cursor: pointer; font-family: 'Prompt', sans-serif; font-weight: 500; font-size: 0.9em; transition: 0.2s; white-space: nowrap; }
         .btn-use { background-color: var(--color-blue); color: white; }
         .btn-charge { background-color: white; color: var(--color-red); border: 1px solid var(--color-red); }
-        .btn-edit { background-color: #F39C12; color: white; padding: 5px 10px; font-size: 0.8em; margin-top: 5px; }
+        .btn-edit { background-color: #F39C12; color: white; padding: 5px 10px; font-size: 0.8em; margin-top: 6px; }
         .btn:hover { filter: brightness(0.9); }
 
-        /* Modal ตกแต่งหน้าต่างป๊อปอัป */
+        /* Modal */
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); }
-        .modal-content { background-color: #fefefe; margin: 10% auto; padding: 25px; border-radius: 12px; width: 90%; max-width: 500px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        .modal-content { background-color: #fefefe; margin: 5% auto; padding: 25px; border-radius: 12px; width: 90%; max-width: 500px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
         .modal-header { font-size: 1.2em; font-weight: bold; color: var(--color-blue); margin-bottom: 15px; border-bottom: 2px solid #EEE; padding-bottom: 10px; }
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; font-weight: 500; margin-bottom: 5px; font-size: 0.95em; }
@@ -68,15 +68,15 @@
 <body>
 
     <div class="header-container">
-        <img src="https://cdn-icons-png.flaticon.com/512/3588/3588102.png" alt="โลโก้" class="hospital-logo">
+        <img src="https://lh3.googleusercontent.com/d/1DlsLtw43ZhgFrmvjS6ySFH4EmSwuS0tk" alt="โลโก้" class="hospital-logo">
         <div>
             <h1>ระบบบริหารจัดการเครื่องช่วยหายใจ</h1>
-            <p style="margin: 5px 0 0 0; color: #666;">ศูนย์เครื่องมือแพทย์ (แสดงข้อมูลอายุเครื่อง/แบตเตอรี่ และแจ้งซ่อม)</p>
+            <p style="margin: 5px 0 0 0; color: #666;">ศูนย์เครื่องมือแพทย์ (ระบบคิวเตรียมเครื่องและชาร์จกระตุ้นแบตเตอรี่)</p>
         </div>
     </div>
 
     <div class="search-container">
-        <input type="text" id="searchInput" class="search-box" placeholder="🔍 ค้นหาเลขครุภัณฑ์ หรือ Serial Number..." onkeyup="searchData()">
+        <input type="text" id="searchInput" class="search-box" placeholder="🔍 ค้นหาเลขครุภัณฑ์, Serial หรือรุ่นเครื่อง..." onkeyup="searchData()">
     </div>
     
     <div>
@@ -86,10 +86,10 @@
                 <thead>
                     <tr>
                         <th width="8%" class="text-center">คิว</th>
-                        <th width="25%">ข้อมูลเครื่อง / อายุการใช้งาน</th>
-                        <th width="22%">วันที่เตรียมเครื่องล่าสุด</th>
+                        <th width="30%">ข้อมูลครุภัณฑ์ / รุ่นเครื่อง</th>
+                        <th width="20%">วันที่เตรียมล่าสุด</th>
                         <th width="20%">สถานะ (จอดสแตนด์บาย)</th>
-                        <th width="25%" class="text-center">จัดการ</th>
+                        <th width="22%" class="text-center">จัดการ</th>
                     </tr>
                 </thead>
                 <tbody id="use-list"></tbody>
@@ -104,10 +104,10 @@
                 <thead>
                     <tr>
                         <th width="8%" class="text-center">คิว</th>
-                        <th width="25%">ข้อมูลเครื่อง / อายุการใช้งาน</th>
-                        <th width="22%">วันที่ชาร์จล่าสุด</th>
+                        <th width="30%">ข้อมูลครุภัณฑ์ / รุ่นเครื่อง</th>
+                        <th width="20%">วันที่ชาร์จล่าสุด</th>
                         <th width="20%">สถานะ (การชาร์จ)</th>
-                        <th width="25%" class="text-center">จัดการ</th>
+                        <th width="22%" class="text-center">จัดการ</th>
                     </tr>
                 </thead>
                 <tbody id="charge-list"></tbody>
@@ -121,9 +121,9 @@
             <table class="table-gray">
                 <thead>
                     <tr>
-                        <th width="20%">เลขครุภัณฑ์</th>
+                        <th width="25%">เลขครุภัณฑ์ / รุ่นเครื่อง</th>
                         <th width="30%">อาการชำรุด / หมายเหตุ</th>
-                        <th width="30%">ข้อมูลอายุเครื่อง</th>
+                        <th width="25%">ข้อมูลอายุเครื่อง</th>
                         <th width="20%" class="text-center">จัดการ</th>
                     </tr>
                 </thead>
@@ -132,7 +132,6 @@
         </div>
     </div>
 
-    <!-- Modal สำหรับแก้ไขข้อมูลเครื่อง -->
     <div id="editModal" class="modal">
         <div class="modal-content">
             <span class="close-btn" onclick="closeModal()">&times;</span>
@@ -140,6 +139,11 @@
             
             <input type="hidden" id="modal-id">
             
+            <div class="form-group">
+                <label>รุ่นเครื่องช่วยหายใจ (Model):</label>
+                <input type="text" id="modal-model" placeholder="เช่น Puritan Bennett 840, Evita V300...">
+            </div>
+
             <div class="form-group">
                 <label>สถานะเครื่อง:</label>
                 <select id="modal-status" onchange="toggleSymptom()">
@@ -183,21 +187,22 @@
             try {
                 const response = await fetch(API_URL + "?t=" + new Date().getTime());
                 globalData = await response.json();
-                searchData(); // ให้แสดงผลผ่าน searchData เพื่อให้การกรองทำงานเสมอ
+                searchData();
             } catch (error) { console.error("Error:", error); }
         }
 
+        // ค้นหาครอบคลุม เลขครุภัณฑ์, Serial และรุ่นเครื่อง
         function searchData() {
             const query = document.getElementById('searchInput').value.toLowerCase();
             const filteredData = globalData.filter(item => {
                 const assetId = (item.AssetID || '').toString().toLowerCase();
                 const serial = (item.SerialNumber || '').toString().toLowerCase();
-                return assetId.includes(query) || serial.includes(query);
+                const model = (item.Model || '').toString().toLowerCase();
+                return assetId.includes(query) || serial.includes(query) || model.includes(query);
             });
             processData(filteredData);
         }
 
-        // คำนวณอายุ (ปี/เดือน)
         function calculateAgeText(dateString) {
             if (!dateString) return "ไม่มีข้อมูล";
             const d = new Date(dateString);
@@ -207,8 +212,7 @@
             let years = today.getFullYear() - d.getFullYear();
             let months = today.getMonth() - d.getMonth();
             if (months < 0 || (months === 0 && today.getDate() < d.getDate())) {
-                years--;
-                months += 12;
+                years--; months += 12;
             }
             if(years === 0 && months === 0) return "เพิ่งเปลี่ยน/รับมา";
             return `${years > 0 ? years + ' ปี ' : ''}${months > 0 ? months + ' เดือน' : ''}`;
@@ -220,9 +224,7 @@
             if (isNaN(targetDate)) return 9999;
             const today = new Date();
             today.setHours(0,0,0,0); targetDate.setHours(0,0,0,0);
-            const diffTime = today - targetDate;
-            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-            return diffDays > 0 ? diffDays : 0;
+            return Math.floor((today - targetDate) / (1000 * 60 * 60 * 24));
         }
 
         function formatDate(dateString, type) {
@@ -239,17 +241,16 @@
             return `<span class="status-badge status-normal">ผ่านมา ${days} วัน 🟢</span>`;
         }
 
-        // === จัดการ Modal ===
         function openModal(assetId) {
             const item = globalData.find(m => m.AssetID == assetId);
             if(!item) return;
 
             document.getElementById('modal-id').value = item.AssetID;
             document.getElementById('modal-asset').innerText = `[${item.AssetID}]`;
+            document.getElementById('modal-model').value = item.Model || '';
             document.getElementById('modal-status').value = (item.Status === 'Broken') ? 'Broken' : 'Ready';
             document.getElementById('modal-symptom').value = item.Symptom || '';
             
-            // แปลงวันที่ให้เข้ากับ <input type="date">
             document.getElementById('modal-receive').value = item.ReceiveDate ? new Date(item.ReceiveDate).toISOString().split('T')[0] : '';
             document.getElementById('modal-battery').value = item.BatteryDate ? new Date(item.BatteryDate).toISOString().split('T')[0] : '';
             
@@ -265,6 +266,7 @@
 
         async function saveMachineInfo() {
             const id = document.getElementById('modal-id').value;
+            const model = document.getElementById('modal-model').value;
             const status = document.getElementById('modal-status').value;
             const symptom = document.getElementById('modal-symptom').value;
             const receive = document.getElementById('modal-receive').value;
@@ -274,23 +276,18 @@
             btn.innerText = "กำลังบันทึก..."; btn.disabled = true;
 
             try {
-                // เข้ารหัสข้อมูลก่อนส่งผ่าน URL ป้องกันภาษาไทยเพี้ยน
-                const targetUrl = `${API_URL}?action=update_info&id=${id}&status=${status}&symptom=${encodeURIComponent(symptom)}&receivedate=${receive}&batterydate=${battery}`;
+                const targetUrl = `${API_URL}?action=update_info&id=${id}&model=${encodeURIComponent(model)}&status=${status}&symptom=${encodeURIComponent(symptom)}&receivedate=${receive}&batterydate=${battery}`;
                 await fetch(targetUrl);
                 closeModal();
                 await fetchData(); 
-            } catch (error) {
-                alert("เกิดข้อผิดพลาด กรุณาลองใหม่");
-            }
+            } catch (error) { alert("เกิดข้อผิดพลาด"); }
             btn.innerText = "บันทึกข้อมูล"; btn.disabled = false;
         }
 
         async function actionUpdate(assetId, actionType, buttonElement, inputId) {
             const selectedDate = document.getElementById(inputId).value;
-            if(!selectedDate) { alert("กรุณาเลือกวันที่ก่อนกดบันทึก"); return; }
-
-            const displayDate = new Date(selectedDate).toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric' });
-            if (!confirm(`ยืนยันบันทึกข้อมูล ณ วันที่ ${displayDate} ใช่หรือไม่?`)) return;
+            if(!selectedDate) { alert("กรุณาเลือกวันที่"); return; }
+            if (!confirm(`ยืนยันการบันทึกข้อมูลใช่หรือไม่?`)) return;
 
             const originalText = buttonElement.innerText;
             buttonElement.innerText = "กำลังบันทึก..."; buttonElement.disabled = true;
@@ -298,24 +295,19 @@
             try {
                 await fetch(`${API_URL}?action=${actionType}&id=${assetId}&date=${selectedDate}`);
                 await fetchData(); 
-            } catch (error) {
-                alert("เกิดข้อผิดพลาด"); buttonElement.innerText = originalText; buttonElement.disabled = false;
-            }
+            } catch (error) { alert("เกิดข้อผิดพลาด"); buttonElement.innerText = originalText; buttonElement.disabled = false; }
         }
 
         function getMachineInfoHTML(item) {
-            const ageMachine = calculateAgeText(item.ReceiveDate);
-            const ageBattery = calculateAgeText(item.BatteryDate);
             return `
-                <strong>${item.AssetID || '-'}</strong> <small style="color:#777;">(SN: ${item.SerialNumber || '-'})</small>
-                <span class="info-text">⚙️ อายุเครื่อง: ${ageMachine}</span>
-                <span class="info-text">🔋 อายุแบต: ${ageBattery}</span>
-                <button class="btn btn-edit" onclick="openModal('${item.AssetID}')">✏️ แก้ไขข้อมูล</button>
+                <strong>${item.AssetID || '-'}</strong> <small style="color:#666;">(SN: ${item.SerialNumber || '-'})</small>
+                <span class="info-text" style="color:var(--color-blue); font-weight:500;">📝 รุ่น: ${item.Model || 'ยังไม่ระบุรุ่น'}</span>
+                <span class="info-text">⚙️ อายุเครื่อง: ${calculateAgeText(item.ReceiveDate)} | 🔋 อายุแบต: ${calculateAgeText(item.BatteryDate)}</span>
+                <button class="btn btn-edit" onclick="openModal('${item.AssetID}')">✏️ แก้ไขข้อมูล / รุ่น</button>
             `;
         }
 
         function processData(data) {
-            // แยกเครื่องพร้อมใช้ และเครื่องชำรุด
             const readyMachines = data.filter(m => m.Status !== 'Broken');
             const brokenMachines = data.filter(m => m.Status === 'Broken');
 
@@ -333,9 +325,8 @@
         function renderUseTable(items) {
             const tbody = document.getElementById('use-list');
             if(items.length === 0) { tbody.innerHTML = '<tr><td colspan="5" class="text-center">ไม่มีข้อมูล</td></tr>'; return; }
-
-            const todayStr = getTodayString();
-            tbody.innerHTML = '';
+            const todayStr = getTodayString(); tbody.innerHTML = '';
+            
             items.forEach((item, index) => {
                 const tr = document.createElement('tr');
                 let isPreppedToday = item.StartDate && (new Date().toDateString() === new Date(item.StartDate).toDateString());
@@ -352,9 +343,7 @@
                     <td class="text-center">
                         <div class="action-flex">
                             <input type="date" id="${inputId}" class="date-input" value="${todayStr}">
-                            <button class="btn btn-use" onclick="actionUpdate('${item.AssetID}', 'use', this, '${inputId}')">
-                                ${isPreppedToday ? 'แก้ไข' : 'บันทึกเตรียม'}
-                            </button>
+                            <button class="btn btn-use" onclick="actionUpdate('${item.AssetID}', 'use', this, '${inputId}')">บันทึกเตรียม</button>
                         </div>
                     </td>
                 `;
@@ -365,9 +354,8 @@
         function renderChargeTable(items) {
             const tbody = document.getElementById('charge-list');
             if(items.length === 0) { tbody.innerHTML = '<tr><td colspan="5" class="text-center">ไม่มีข้อมูล</td></tr>'; return; }
-
-            const todayStr = getTodayString();
-            tbody.innerHTML = '';
+            const todayStr = getTodayString(); tbody.innerHTML = '';
+            
             items.forEach((item, index) => {
                 const tr = document.createElement('tr');
                 if(item.daysSinceCharge >= 30 && item.daysSinceCharge !== 9999) tr.style.backgroundColor = '#FFF3F2';
@@ -392,15 +380,15 @@
         function renderBrokenTable(items) {
             const tbody = document.getElementById('broken-list');
             if(items.length === 0) { tbody.innerHTML = '<tr><td colspan="4" class="text-center">ไม่มีเครื่องชำรุดในระบบ 🎉</td></tr>'; return; }
-
             tbody.innerHTML = '';
+            
             items.forEach(item => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td><strong>${item.AssetID || '-'}</strong><br><small>SN: ${item.SerialNumber || '-'}</small></td>
+                    <td><strong>${item.AssetID || '-'}</strong><br><small style="color:var(--color-blue)">รุ่น: ${item.Model || '-'}</small><br><small style="color:#777;">SN: ${item.SerialNumber || '-'}</small></td>
                     <td><span class="status-badge status-broken">ชำรุด</span><br><span style="color:var(--color-red); font-weight:500;">${item.Symptom || 'ไม่ระบุอาการ'}</span></td>
                     <td><span class="info-text">อายุเครื่อง: ${calculateAgeText(item.ReceiveDate)}</span><span class="info-text">อายุแบต: ${calculateAgeText(item.BatteryDate)}</span></td>
-                    <td class="text-center"><button class="btn btn-edit" onclick="openModal('${item.AssetID}')">✏️ อัปเดตสถานะ/ส่งซ่อมเสร็จ</button></td>
+                    <td class="text-center"><button class="btn btn-edit" onclick="openModal('${item.AssetID}')">✏️ อัปเดตสถานะ</button></td>
                 `;
                 tbody.appendChild(tr);
             });
