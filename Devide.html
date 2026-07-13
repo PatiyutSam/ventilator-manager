@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ventilator Management System</title>
+    <style>
+        :root {
+            --color-cream: #FDFBF7; 
+            --color-blue: #4A90E2;  
+            --color-red: #E74C3C;   
+            --text-dark: #333333;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--color-cream);
+            color: var(--text-dark);
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1, h2 { color: var(--color-blue); }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            border-left: 5px solid var(--color-blue);
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .card.urgent {
+            border-left-color: var(--color-red);
+        }
+
+        .badge-red {
+            background-color: var(--color-red);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>ระบบบริหารจัดการเครื่องช่วยหายใจ</h1>
+    
+    <div class="dashboard">
+        <div>
+            <h2>🔵 ลำดับที่ควรหยิบใช้งาน (ชั่วโมงใช้งานน้อยที่สุด)</h2>
+            <div id="use-list">กำลังโหลดข้อมูล...</div>
+        </div>
+
+        <div>
+            <h2>🔴 ลำดับที่ต้องชาร์จกระตุ้นแบตเตอรี่</h2>
+            <div id="charge-list">กำลังโหลดข้อมูล...</div>
+        </div>
+    </div>
+
+    <script>
+        // เปลี่ยนตรงนี้เป็น URL Web App ของคุณที่ได้มาจาก Google Sheets
+        const API_URL = 'https://script.google.com/macros/s/AKfycbxUISoKM4RLt5T9dnjN86-Q5WCEbytq5GhHJArvP3Azv0FhhYemSYvi9IbU6cVd2-R3Lw/exec';
+
+        async function fetchData() {
+            try {
+                const response = await fetch(API_URL);
+                const data = await response.json();
+                processData(data);
+            } catch (error) {
+                document.getElementById('use-list').innerText = "ไม่สามารถโหลดข้อมูลได้ ตรวจสอบ API URL";
+                document.getElementById('charge-list').innerText = "ไม่สามารถโหลดข้อมูลได้ ตรวจสอบ API URL";
+            }
+        }
+
+        function processData(data) {
+            const readyMachines = data.filter(m => m.Status === 'Ready');
+
+            const useFirst = [...readyMachines].sort((a, b) => a.UsageHours - b.UsageHours);
+            const chargeFirst = [...readyMachines].sort((a, b) => b.BatteryAgeDays - a.BatteryAgeDays);
+
+            renderList('use-list', useFirst, 'ใช้งานมาแล้ว', 'ชม.');
+            renderList('charge-list', chargeFirst, 'อายุแบตฯ', 'วัน', true);
+        }
+
+        function renderList(containerId, items, statLabel, statUnit, isUrgent = false) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+
+            if(items.length === 0) {
+                container.innerHTML = '<p>ไม่มีเครื่องช่วยหายใจที่พร้อมใช้งานในระบบ</p>';
+                return;
+            }
+
+            items.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = `card ${isUrgent && index < 3 ? 'urgent' : ''}`;
+                
+                card.innerHTML = `
+                    <h3>ลำดับที่ ${index + 1} : เลขครุภัณฑ์ ${item.AssetID}</h3>
+                    <p>Serial: ${item.SerialNumber} | วันที่เริ่มใช้งาน: ${item.StartDate}</p>
+                    <p>วันที่เปลี่ยนแบตล่าสุด: ${item.BatteryDate} | อายุแบต: ${item.BatteryAgeDays} วัน</p>
+                    <p>
+                        ${statLabel}: <strong>${isUrgent ? item.BatteryAgeDays : item.UsageHours} ${statUnit}</strong> 
+                        ${isUrgent && index < 3 ? '<span class="badge-red">แนะนำให้ชาร์จกระตุ้น</span>' : ''}
+                    </p>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        fetchData();
+    </script>
+</body>
+</html>
