@@ -10,10 +10,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
+        /* กฎสี 60-30-10 */
         :root {
-            --color-cream: #FDFBF7; 
-            --color-blue: #4A90E2;  
-            --color-red: #E74C3C;   
+            --color-cream: #FDFBF7; /* 60% พื้นหลัง */
+            --color-blue: #4A90E2;  /* 30% สีหลัก */
+            --color-red: #E74C3C;   /* 10% จุดแจ้งเตือน */
             --text-dark: #333333;
         }
 
@@ -49,14 +50,18 @@
         .table-red th { background-color: var(--color-red); }
         tr:hover { background-color: #F8F9FA; }
         
+        /* 🔵 สีแถวที่เปลี่ยนไปเมื่อกดใช้งานแล้วในวันนั้น (ตกไปอยู่ด้านล่าง) */
+        .prepped-row { background-color: #EBF5FB; color: #7F8C8D; }
+        .prepped-row:hover { background-color: #E1F0FA; }
+        
         .urgent-row { background-color: #FFF3F2; } 
         .urgent-row:hover { background-color: #FCE8E6; }
 
         .badge-red { background-color: var(--color-red); color: white; padding: 5px 12px; border-radius: 20px; font-size: 0.85em; font-weight: 500; }
+        .badge-gray { background-color: #A0AAB5; color: white; padding: 6px 14px; border-radius: 20px; font-size: 0.85em; font-weight: 500; display: inline-block; }
         
         .text-center { text-align: center; }
 
-        /* ตกแต่งปุ่มกด */
         .btn {
             padding: 8px 16px;
             border: none;
@@ -80,57 +85,55 @@
         <img src="https://cdn-icons-png.flaticon.com/512/3588/3588102.png" alt="โลโก้" class="hospital-logo" id="logo">
         <div>
             <h1>ระบบบริหารจัดการเครื่องช่วยหายใจ</h1>
-            <p style="margin: 5px 0 0 0; color: #666;">ศูนย์เครื่องมือแพทย์ (ระบบหมุนเวียนและกระตุ้นแบตเตอรี่)</p>
+            <p style="margin: 5px 0 0 0; color: #666;">ศูนย์เครื่องมือแพทย์ (ระบบหมุนเวียนคิวเตรียมพร้อมใช้งาน)</p>
         </div>
     </div>
     
     <div>
-        <h2>🔵 ลำดับที่ควรหยิบใช้งาน (เลือกชั่วโมงใช้งานน้อยที่สุด)</h2>
+        <h2>🔵 ลำดับที่ควรหยิบไปต่อเครื่องเตรียมไว้ (เรียงจากเครื่องที่จอดรอไว้นานที่สุด)</h2>
         <div class="table-responsive">
             <table>
                 <thead>
                     <tr>
-                        <th width="10%" class="text-center">ลำดับ</th>
-                        <th width="20%">เลขครุภัณฑ์</th>
-                        <th width="15%">ชั่วโมงใช้งาน</th>
-                        <th width="30%">วันที่ใช้งานล่าสุด</th>
+                        <th width="10%" class="text-center">ลำดับคิว</th>
+                        <th width="30%">เลขครุภัณฑ์ / Serial Number</th>
+                        <th width="35%">วันที่ออกไปเตรียมเครื่องล่าสุด</th>
                         <th width="25%" class="text-center">การจัดการ</th>
                     </tr>
                 </thead>
                 <tbody id="use-list">
-                    <tr><td colspan="5" class="text-center">กำลังโหลดข้อมูล...</td></tr>
+                    <tr><td colspan="4" class="text-center">กำลังโหลดข้อมูลคิวใช้งาน...</td></tr>
                 </tbody>
             </table>
         </div>
     </div>
 
     <div class="section-red">
-        <h2>🔴 ลำดับที่ต้องชาร์จกระตุ้นแบตเตอรี่ (ไม่ได้ชาร์จนานที่สุด)</h2>
+        <h2>🔴 ลำดับที่ต้องชาร์จกระตุ้นแบตเตอรี่ (เรียงตามเครื่องที่ไม่ได้ชาร์จนานที่สุด)</h2>
         <div class="table-responsive">
             <table class="table-red">
                 <thead>
                     <tr>
                         <th width="10%" class="text-center">ลำดับ</th>
-                        <th width="20%">เลขครุภัณฑ์</th>
-                        <th width="20%">วันที่ชาร์จล่าสุด</th>
-                        <th width="25%">ไม่ได้ชาร์จมาแล้ว (วัน)</th>
-                        <th width="25%" class="text-center">การจัดการ</th>
+                        <th width="30%">เลขครุภัณฑ์ / Serial Number</th>
+                        <th width="25%">วันที่ชาร์จล่าสุด</th>
+                        <th width="20%">ไม่ได้ชาร์จมาแล้ว</th>
+                        <th width="15%" class="text-center">การจัดการ</th>
                     </tr>
                 </thead>
                 <tbody id="charge-list">
-                    <tr><td colspan="5" class="text-center">กำลังโหลดข้อมูล...</td></tr>
+                    <tr><td colspan="5" class="text-center">กำลังโหลดข้อมูลคิวชาร์จ...</td></tr>
                 </tbody>
             </table>
         </div>
     </div>
 
     <script>
-        // ⭐️ เปลี่ยนเป็น API URL ของคุณ ⭐️
+        // ⭐️ นำ API URL จาก Google Sheets มาวางตรงนี้เหมือนเดิมครับ ⭐️
         const API_URL = 'https://script.google.com/macros/s/AKfycbxUISoKM4RLt5T9dnjN86-Q5WCEbytq5GhHJArvP3Azv0FhhYemSYvi9IbU6cVd2-R3Lw/exec';
 
         async function fetchData() {
             try {
-                // เติมพารามิเตอร์ป้องกันการจำข้อมูลเก่า (Cache)
                 const response = await fetch(API_URL + "?t=" + new Date().getTime());
                 const data = await response.json();
                 processData(data);
@@ -139,25 +142,37 @@
             }
         }
 
-        // ฟังก์ชันเมื่อผู้ใช้กดปุ่ม
+        // ฟังก์ชันเมื่อผู้ใช้กดปุ่ม + เพิ่ม Pop-up แจ้งเตือนยืนยัน
         async function actionUpdate(assetId, actionType, buttonElement) {
-            // ป้องกันการกดซ้ำซ้อน
+            const confirmMsg = actionType === 'use' 
+                ? `ยืนยันนำเครื่องเลขครุภัณฑ์ [ ${assetId} ] ไปต่อเตรียมไว้ใช่หรือไม่?`
+                : `ยืนยันการเสียบชาร์จกระตุ้นแบตเตอรี่ เครื่องเลขครุภัณฑ์ [ ${assetId} ] ใช่หรือไม่?`;
+
+            // 1. หน้าต่าง Pop-up ยืนยันการกด
+            if (!confirm(confirmMsg)) {
+                return; // ถ้าผู้ใช้กด ยกเลิก (Cancel) ให้หยุดทำงาน ไม่บันทึกข้อมูล
+            }
+
             const originalText = buttonElement.innerText;
             buttonElement.innerText = "กำลังบันทึก...";
             buttonElement.disabled = true;
 
             try {
-                // ส่งคำสั่งไปที่ Google Sheets (แนบ action และ id ไปกับ URL)
                 const targetUrl = `${API_URL}?action=${actionType}&id=${assetId}`;
                 await fetch(targetUrl);
-                
-                // เมื่อเสร็จแล้ว ให้ดึงข้อมูลมาแสดงใหม่ทั้งหมด
-                await fetchData();
+                await fetchData(); // โหลดตารางใหม่ ลำดับจะสลับอัตโนมัติ
             } catch (error) {
                 alert("เกิดข้อผิดพลาดในการบันทึกข้อมูล กรุณาลองใหม่");
                 buttonElement.innerText = originalText;
                 buttonElement.disabled = false;
             }
+        }
+
+        // คำนวณหาค่า Timestamp เพื่อเรียงลำดับ (เครื่องไม่มีประวัติ/ค่าว่าง จะได้ค่า 0 เพื่อให้อยู่บนสุด)
+        function getTimestamp(dateString) {
+            if (!dateString) return 0;
+            const d = new Date(dateString);
+            return isNaN(d.getTime()) ? 0 : d.getTime();
         }
 
         function getDaysSince(dateString) {
@@ -173,7 +188,7 @@
         }
 
         function formatDate(dateString) {
-            if (!dateString) return "-";
+            if (!dateString) return "ยังไม่มีประวัติการเตรียมเครื่อง (เครื่องใหม่)";
             const d = new Date(dateString);
             if (isNaN(d)) return dateString;
             return d.toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric' });
@@ -182,7 +197,10 @@
         function processData(data) {
             const readyMachines = data.filter(m => m.Status === 'Ready' || m.Status === '');
 
-            const useFirst = [...readyMachines].sort((a, b) => (Number(a.UsageHours) || 0) - (Number(b.UsageHours) || 0));
+            // เรียงลำดับใช้งาน: ใครเตรียมไว้นานสุด (Timestamp น้อยสุด) ขึ้นก่อน วันนี้ (Timestamp มากสุด) ตกไปล่างสุด
+            const useFirst = [...readyMachines].sort((a, b) => getTimestamp(a.StartDate) - getTimestamp(b.StartDate));
+            
+            // เรียงลำดับชาร์จ
             const chargeData = readyMachines.map(m => ({ ...m, daysSinceCharge: getDaysSince(m.LastCharged) }));
             const chargeFirst = chargeData.sort((a, b) => b.daysSinceCharge - a.daysSinceCharge);
 
@@ -195,20 +213,34 @@
             tbody.innerHTML = '';
             
             if(items.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" class="text-center">ไม่มีข้อมูล</td></tr>'; return;
+                tbody.innerHTML = '<tr><td colspan="4" class="text-center">ไม่มีเครื่องช่วยหายใจพร้อมใช้งาน</td></tr>'; return;
             }
 
             items.forEach((item, index) => {
                 const tr = document.createElement('tr');
+                
+                // ตรวจสอบว่าเครื่องนี้พึ่งถูกกดบันทึกการเตรียมไป "วันนี้" หรือไม่
+                let isPreppedToday = false;
+                if (item.StartDate) {
+                    const today = new Date().toDateString();
+                    const targetDate = new Date(item.StartDate).toDateString();
+                    isPreppedToday = (today === targetDate);
+                }
+
+                // ถ้าเตรียมแล้ววันนี้ ให้ใส่คลาสเปลี่ยนสีไฮไลท์แถวเป็นฟ้าพาสเทล
+                if (isPreppedToday) {
+                    tr.className = 'prepped-row';
+                }
+
                 tr.innerHTML = `
                     <td class="text-center"><strong>${index + 1}</strong></td>
-                    <td><strong>${item.AssetID || '-'}</strong><br><small style="color:#888;">SN: ${item.SerialNumber || '-'}</small></td>
-                    <td>${item.UsageHours || 0} ชม.</td>
+                    <td><strong>${item.AssetID || '-'}</strong><br><small style="color:#777;">SN: ${item.SerialNumber || '-'}</small></td>
                     <td>${formatDate(item.StartDate)}</td>
                     <td class="text-center">
-                        <button class="btn btn-use" onclick="actionUpdate('${item.AssetID}', 'use', this)">
-                            นำไปใช้งานวันนี้
-                        </button>
+                        ${isPreppedToday 
+                            ? '<span class="badge-gray">เตรียมเครื่องแล้ววันนี้</span>' 
+                            : `<button class="btn btn-use" onclick="actionUpdate('${item.AssetID}', 'use', this)">เจ้าหน้าที่นำไปต่อเตรียมเครื่อง</button>`
+                        }
                     </td>
                 `;
                 tbody.appendChild(tr);
@@ -231,15 +263,13 @@
 
                 tr.innerHTML = `
                     <td class="text-center"><strong>${index + 1}</strong></td>
-                    <td><strong>${item.AssetID || '-'}</strong><br><small style="color:#888;">SN: ${item.SerialNumber || '-'}</small></td>
-                    <td>${formatDate(item.LastCharged)}</td>
+                    <td><strong>${item.AssetID || '-'}</strong><br><small style="color:#777;">SN: ${item.SerialNumber || '-'}</small></td>
+                    <td>${item.LastCharged ? new Date(item.LastCharged).toLocaleDateString('th-TH', {year:'numeric', month:'short', day:'numeric'}) : '-'}</td>
                     <td style="color:${isUrgent ? 'var(--color-red)' : 'inherit'}; font-weight:${isUrgent ? '600' : 'normal'}">
                         ${daysText} ${isUrgent ? '<span class="badge-red" style="margin-left:10px;">ด่วน</span>' : ''}
                     </td>
                     <td class="text-center">
-                        <button class="btn btn-charge" onclick="actionUpdate('${item.AssetID}', 'charge', this)">
-                            เสียบชาร์จวันนี้
-                        </button>
+                        <button class="btn btn-charge" onclick="actionUpdate('${item.AssetID}', 'charge', this)">เสียบชาร์จวันนี้</button>
                     </td>
                 `;
                 tbody.appendChild(tr);
