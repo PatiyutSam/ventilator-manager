@@ -28,7 +28,7 @@
         .header-container {
             display: flex;
             align-items: center;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             background-color: white;
             padding: 20px;
             border-radius: 12px;
@@ -37,13 +37,34 @@
         }
 
         .hospital-logo { width: 80px; height: 80px; object-fit: contain; margin-right: 20px; }
-
         h1 { color: var(--color-blue); margin: 0; font-size: 28px; font-weight: 600; }
-        h2 { color: var(--color-blue); margin-top: 40px; margin-bottom: 15px; font-size: 20px; border-left: 5px solid var(--color-blue); padding-left: 10px; }
+        h2 { color: var(--color-blue); margin-top: 30px; margin-bottom: 15px; font-size: 20px; border-left: 5px solid var(--color-blue); padding-left: 10px; }
         .section-red h2 { color: var(--color-red); border-left-color: var(--color-red); }
 
+        /* ช่องค้นหา */
+        .search-container {
+            margin-bottom: 25px;
+            text-align: right;
+        }
+        .search-box {
+            font-family: 'Prompt', sans-serif;
+            padding: 10px 15px;
+            width: 100%;
+            max-width: 350px;
+            border: 2px solid #E0E0E0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+        .search-box:focus {
+            border-color: var(--color-blue);
+            outline: none;
+            box-shadow: 0 0 8px rgba(74, 144, 226, 0.3);
+        }
+
+        /* ตาราง */
         .table-responsive { overflow-x: auto; background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        table { width: 100%; border-collapse: collapse; min-width: 800px; }
+        table { width: 100%; border-collapse: collapse; min-width: 850px; }
         th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #EEEEEE; vertical-align: middle; }
         th { background-color: var(--color-blue); color: white; font-weight: 500; white-space: nowrap; }
         .table-red th { background-color: var(--color-red); }
@@ -51,31 +72,19 @@
         
         .prepped-row { background-color: #EBF5FB; color: #5D6D7E; }
         .prepped-row:hover { background-color: #E1F0FA; }
-        
-        .urgent-row { background-color: #FFF3F2; } 
-        .urgent-row:hover { background-color: #FCE8E6; }
 
-        .badge-red { background-color: var(--color-red); color: white; padding: 4px 10px; border-radius: 20px; font-size: 0.8em; font-weight: 500; }
-        .badge-blue { background-color: var(--color-blue); color: white; padding: 4px 10px; border-radius: 20px; font-size: 0.8em; font-weight: 500; }
-        .badge-gray { background-color: #A0AAB5; color: white; padding: 6px 12px; border-radius: 20px; font-size: 0.85em; font-weight: 500; display: inline-block; }
+        /* ป้ายแจ้งเตือนสถานะวัน */
+        .status-badge { padding: 6px 12px; border-radius: 20px; font-size: 0.85em; font-weight: 500; display: inline-block; white-space: nowrap; }
+        .status-normal { background-color: #E8F8F5; color: #117A65; } /* ไม่เกิน 7 วัน (สีเขียว) */
+        .status-warning { background-color: #FEF9E7; color: #D4AC0D; } /* เกิน 7 วัน (สีส้ม) */
+        .status-danger { background-color: #FDEDEC; color: #E74C3C; } /* เกิน 30 วัน (สีแดง) */
+        .status-none { background-color: #F2F4F4; color: #7F8C8D; }   /* ไม่มีข้อมูล */
         
         .text-center { text-align: center; }
 
-        /* จัดแต่งองค์ประกอบจัดการวันที่ */
-        .action-flex {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            justify-content: center;
-        }
-
-        .date-input {
-            font-family: 'Prompt', sans-serif;
-            padding: 6px;
-            border: 1px solid #CCCCCC;
-            border-radius: 4px;
-            font-size: 0.9em;
-        }
+        /* จัดแต่งองค์ประกอบปุ่มและวันที่ */
+        .action-flex { display: flex; align-items: center; gap: 8px; justify-content: center; }
+        .date-input { font-family: 'Prompt', sans-serif; padding: 6px; border: 1px solid #CCCCCC; border-radius: 4px; font-size: 0.9em; }
 
         .btn {
             padding: 7px 14px;
@@ -98,11 +107,17 @@
 <body>
 
     <div class="header-container">
+        <!-- ⭐️ อย่าลืมเปลี่ยนโลโก้ -->
         <img src="https://cdn-icons-png.flaticon.com/512/3588/3588102.png" alt="โลโก้" class="hospital-logo" id="logo">
         <div>
             <h1>ระบบบริหารจัดการเครื่องช่วยหายใจ</h1>
             <p style="margin: 5px 0 0 0; color: #666;">ศูนย์เครื่องมือแพทย์ (ระบบหมุนเวียนคิวเตรียมพร้อมใช้งาน)</p>
         </div>
+    </div>
+
+    <!-- ช่องค้นหา -->
+    <div class="search-container">
+        <input type="text" id="searchInput" class="search-box" placeholder="🔍 ค้นหาเลขครุภัณฑ์ หรือ Serial Number..." onkeyup="searchData()">
     </div>
     
     <div>
@@ -113,8 +128,8 @@
                     <tr>
                         <th width="8%" class="text-center">ลำดับคิว</th>
                         <th width="22%">เลขครุภัณฑ์ / Serial Number</th>
-                        <th width="25%">วันที่ออกไปเตรียมเครื่องล่าสุด</th>
-                        <th width="20%">ผ่านการเตรียมมาแล้ว (วัน)</th>
+                        <th width="20%">วันที่เตรียมเครื่องล่าสุด</th>
+                        <th width="25%">สถานะ (จอดสแตนด์บาย)</th>
                         <th width="25%" class="text-center">เลือกวันที่และกดบันทึก</th>
                     </tr>
                 </thead>
@@ -132,10 +147,10 @@
                 <thead>
                     <tr>
                         <th width="8%" class="text-center">ลำดับ</th>
-                        <th width="27%">เลขครุภัณฑ์ / Serial Number</th>
-                        <th width="25%">วันที่ชาร์จล่าสุด</th>
-                        <th width="20%">ไม่ได้ชาร์จมาแล้ว</th>
-                        <th width="20%" class="text-center">เลือกวันที่และกดบันทึก</th>
+                        <th width="22%">เลขครุภัณฑ์ / Serial Number</th>
+                        <th width="20%">วันที่ชาร์จล่าสุด</th>
+                        <th width="25%">สถานะ (การชาร์จ)</th>
+                        <th width="25%" class="text-center">เลือกวันที่และกดบันทึก</th>
                     </tr>
                 </thead>
                 <tbody id="charge-list">
@@ -146,10 +161,11 @@
     </div>
 
     <script>
-        // ⭐️ นำ API URL จาก Google Sheets มาวางตรงนี้เหมือนเดิมครับ ⭐️
+        // ⭐️ เปลี่ยนเป็น API URL ของคุณ ⭐️
         const API_URL = 'https://script.google.com/macros/s/AKfycbxUISoKM4RLt5T9dnjN86-Q5WCEbytq5GhHJArvP3Azv0FhhYemSYvi9IbU6cVd2-R3Lw/exec';
+        
+        let globalData = []; // ตัวแปรเก็บข้อมูลทั้งหมดไว้สำหรับค้นหา
 
-        // ฟังก์ชันช่วยหาค่าวันที่ของวันนี้ในรูปแบบ YYYY-MM-DD สำหรับใส่ในช่องกรอกวันที่เริ่มต้น
         function getTodayString() {
             const today = new Date();
             const offset = today.getTimezoneOffset();
@@ -160,26 +176,37 @@
         async function fetchData() {
             try {
                 const response = await fetch(API_URL + "?t=" + new Date().getTime());
-                const data = await response.json();
-                processData(data);
+                globalData = await response.json(); // เก็บข้อมูลลงตัวแปร
+                processData(globalData); // นำข้อมูลไปประมวลผล
             } catch (error) {
                 console.error("Error:", error);
             }
         }
 
-        // ปรับปรุงฟังก์ชันบันทึกข้อมูลดึงวันที่จาก input
+        // ฟังก์ชันสำหรับการค้นหา
+        function searchData() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            
+            // กรองข้อมูลที่ตรงกับคำค้นหา
+            const filteredData = globalData.filter(item => {
+                const assetId = (item.AssetID || '').toString().toLowerCase();
+                const serial = (item.SerialNumber || '').toString().toLowerCase();
+                return assetId.includes(query) || serial.includes(query);
+            });
+            
+            // นำข้อมูลที่กรองแล้วไปแสดงผล
+            processData(filteredData);
+        }
+
         async function actionUpdate(assetId, actionType, buttonElement, inputId) {
             const dateInput = document.getElementById(inputId);
             const selectedDate = dateInput.value;
 
             if(!selectedDate) {
-                alert("กรุณาเลือกวันที่ก่อนกดบันทึก");
-                return;
+                alert("กรุณาเลือกวันที่ก่อนกดบันทึก"); return;
             }
 
-            // แปลงวันที่แสดงในกล่องแจ้งเตือนให้เป็นแบบไทย
             const displayDate = new Date(selectedDate).toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric' });
-            
             const confirmMsg = actionType === 'use' 
                 ? `ยืนยันบันทึกว่าเครื่อง [ ${assetId} ] ถูกนำไปเตรียมเครื่อง ณ วันที่ ${displayDate} ใช่หรือไม่?`
                 : `ยืนยันบันทึกว่าเครื่อง [ ${assetId} ] ได้รับการชาร์จ ณ วันที่ ${displayDate} ใช่หรือไม่?`;
@@ -191,9 +218,11 @@
             buttonElement.disabled = true;
 
             try {
-                // ส่งทั้ง action, id และ date ที่ผู้ใช้เลือกไปที่ Google Sheets
                 const targetUrl = `${API_URL}?action=${actionType}&id=${assetId}&date=${selectedDate}`;
                 await fetch(targetUrl);
+                
+                // ล้างช่องค้นหาและดึงข้อมูลใหม่
+                document.getElementById('searchInput').value = '';
                 await fetchData(); 
             } catch (error) {
                 alert("เกิดข้อผิดพลาดในการบันทึกข้อมูล กรุณาลองใหม่");
@@ -221,18 +250,28 @@
         }
 
         function formatDate(dateString, type) {
-            if (!dateString) {
-                return type === 'use' ? "ยังไม่เคยเตรียม (เครื่องใหม่)" : "ไม่มีประวัติ";
-            }
+            if (!dateString) return type === 'use' ? "เครื่องใหม่ (ยังไม่เคยเตรียม)" : "-";
             const d = new Date(dateString);
             if (isNaN(d)) return dateString;
             return d.toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric' });
         }
 
+        // ฟังก์ชันคืนค่า ป้ายสีแจ้งเตือน
+        function getAlertBadge(days) {
+            if (days === 9999) return `<span class="status-badge status-none">ไม่มีประวัติ</span>`;
+            
+            if (days >= 30) {
+                return `<span class="status-badge status-danger">ผ่านมา ${days} วัน (เกิน 1 เดือน) 🔴</span>`;
+            } else if (days >= 7) {
+                return `<span class="status-badge status-warning">ผ่านมา ${days} วัน (เกิน 1 สัปดาห์) 🟠</span>`;
+            } else {
+                return `<span class="status-badge status-normal">ผ่านมา ${days} วัน 🟢</span>`;
+            }
+        }
+
         function processData(data) {
             const readyMachines = data.filter(m => m.Status === 'Ready' || m.Status === '');
 
-            // คำนวณวันสำหรับตารางใช้งานด้วย
             const useData = readyMachines.map(m => ({ ...m, daysSinceUse: getDaysSince(m.StartDate) }));
             const useFirst = useData.sort((a, b) => getTimestamp(a.StartDate) - getTimestamp(b.StartDate));
             
@@ -248,7 +287,7 @@
             tbody.innerHTML = '';
             
             if(items.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" class="text-center">ไม่มีเครื่องช่วยหายใจพร้อมใช้งาน</td></tr>'; return;
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center" style="padding: 30px;">ไม่พบข้อมูลที่ค้นหา</td></tr>'; return;
             }
 
             const todayStr = getTodayString();
@@ -263,21 +302,26 @@
                     isPreppedToday = (today === targetDate);
                 }
 
+                // ถ้ามีการเตรียมวันนี้ แถวจะกลายเป็นสีฟ้า และป้ายสถานะเป็นสีเทาๆ
                 if (isPreppedToday) tr.className = 'prepped-row';
 
-                let daysText = item.daysSinceUse === 9999 ? "-" : `${item.daysSinceUse} วัน`;
                 const inputId = `date-use-${item.AssetID}`;
+                
+                // ดึงป้ายสีแจ้งเตือน (แต่ถ้าเพิ่งเตรียมวันนี้ ให้ขึ้นป้ายพิเศษ)
+                const statusBadge = isPreppedToday 
+                    ? `<span class="status-badge status-none">เพิ่งเตรียมวันนี้ ✔️</span>`
+                    : getAlertBadge(item.daysSinceUse);
 
                 tr.innerHTML = `
                     <td class="text-center"><strong>${index + 1}</strong></td>
                     <td><strong>${item.AssetID || '-'}</strong><br><small style="color:#777;">SN: ${item.SerialNumber || '-'}</small></td>
                     <td>${formatDate(item.StartDate, 'use')}</td>
-                    <td><span class="${item.daysSinceUse !== 9999 ? 'badge-blue' : ''}">${daysText}</span></td>
+                    <td>${statusBadge}</td>
                     <td class="text-center">
                         <div class="action-flex">
                             <input type="date" id="${inputId}" class="date-input" value="${todayStr}">
                             <button class="btn btn-use" onclick="actionUpdate('${item.AssetID}', 'use', this, '${inputId}')">
-                                ${isPreppedToday ? 'แก้ไข/บันทึก' : 'บันทึกเตรียมเครื่อง'}
+                                ${isPreppedToday ? 'แก้ไขวันที่' : 'บันทึกเตรียมเครื่อง'}
                             </button>
                         </div>
                     </td>
@@ -291,26 +335,27 @@
             tbody.innerHTML = '';
             
             if(items.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" class="text-center">ไม่มีข้อมูล</td></tr>'; return;
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center" style="padding: 30px;">ไม่พบข้อมูลที่ค้นหา</td></tr>'; return;
             }
 
             const todayStr = getTodayString();
 
             items.forEach((item, index) => {
-                const isUrgent = index < 3 && item.daysSinceCharge > 0 && item.daysSinceCharge !== 9999; 
                 const tr = document.createElement('tr');
-                if(isUrgent) tr.className = 'urgent-row';
                 
-                let daysText = item.daysSinceCharge === 9999 ? "ไม่มีประวัติ" : `${item.daysSinceCharge} วัน`;
+                // ไฮไลท์แดงทั้งแถวสำหรับเครื่องที่ค้างเกิน 30 วัน เพื่อให้เห็นชัดๆ ว่าวิกฤต
+                if(item.daysSinceCharge >= 30 && item.daysSinceCharge !== 9999) {
+                    tr.style.backgroundColor = '#FFF3F2';
+                }
+                
                 const inputId = `date-charge-${item.AssetID}`;
+                const statusBadge = getAlertBadge(item.daysSinceCharge);
 
                 tr.innerHTML = `
                     <td class="text-center"><strong>${index + 1}</strong></td>
                     <td><strong>${item.AssetID || '-'}</strong><br><small style="color:#777;">SN: ${item.SerialNumber || '-'}</small></td>
                     <td>${formatDate(item.LastCharged, 'charge')}</td>
-                    <td style="color:${isUrgent ? 'var(--color-red)' : 'inherit'}; font-weight:${isUrgent ? '600' : 'normal'}">
-                        ${daysText} ${isUrgent ? '<span class="badge-red" style="margin-left:10px;">ด่วน</span>' : ''}
-                    </td>
+                    <td>${statusBadge}</td>
                     <td class="text-center">
                         <div class="action-flex">
                             <input type="date" id="${inputId}" class="date-input" value="${todayStr}">
