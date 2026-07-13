@@ -10,11 +10,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
-        /* กฎสี 60-30-10 */
         :root {
-            --color-cream: #FDFBF7; /* 60% พื้นหลัง */
-            --color-blue: #4A90E2;  /* 30% สีหลัก */
-            --color-red: #E74C3C;   /* 10% จุดแจ้งเตือน */
+            --color-cream: #FDFBF7; 
+            --color-blue: #4A90E2;  
+            --color-red: #E74C3C;   
             --text-dark: #333333;
         }
 
@@ -44,26 +43,42 @@
         .section-red h2 { color: var(--color-red); border-left-color: var(--color-red); }
 
         .table-responsive { overflow-x: auto; background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        table { width: 100%; border-collapse: collapse; min-width: 700px; }
-        th, td { padding: 15px; text-align: left; border-bottom: 1px solid #EEEEEE; vertical-align: middle; }
+        table { width: 100%; border-collapse: collapse; min-width: 800px; }
+        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #EEEEEE; vertical-align: middle; }
         th { background-color: var(--color-blue); color: white; font-weight: 500; white-space: nowrap; }
         .table-red th { background-color: var(--color-red); }
         tr:hover { background-color: #F8F9FA; }
         
-        /* 🔵 สีแถวที่เปลี่ยนไปเมื่อกดใช้งานแล้วในวันนั้น (ตกไปอยู่ด้านล่าง) */
-        .prepped-row { background-color: #EBF5FB; color: #7F8C8D; }
+        .prepped-row { background-color: #EBF5FB; color: #5D6D7E; }
         .prepped-row:hover { background-color: #E1F0FA; }
         
         .urgent-row { background-color: #FFF3F2; } 
         .urgent-row:hover { background-color: #FCE8E6; }
 
-        .badge-red { background-color: var(--color-red); color: white; padding: 5px 12px; border-radius: 20px; font-size: 0.85em; font-weight: 500; }
-        .badge-gray { background-color: #A0AAB5; color: white; padding: 6px 14px; border-radius: 20px; font-size: 0.85em; font-weight: 500; display: inline-block; }
+        .badge-red { background-color: var(--color-red); color: white; padding: 4px 10px; border-radius: 20px; font-size: 0.8em; font-weight: 500; }
+        .badge-blue { background-color: var(--color-blue); color: white; padding: 4px 10px; border-radius: 20px; font-size: 0.8em; font-weight: 500; }
+        .badge-gray { background-color: #A0AAB5; color: white; padding: 6px 12px; border-radius: 20px; font-size: 0.85em; font-weight: 500; display: inline-block; }
         
         .text-center { text-align: center; }
 
+        /* จัดแต่งองค์ประกอบจัดการวันที่ */
+        .action-flex {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .date-input {
+            font-family: 'Prompt', sans-serif;
+            padding: 6px;
+            border: 1px solid #CCCCCC;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
         .btn {
-            padding: 8px 16px;
+            padding: 7px 14px;
             border: none;
             border-radius: 6px;
             cursor: pointer;
@@ -71,6 +86,7 @@
             font-weight: 500;
             font-size: 0.9em;
             transition: 0.2s;
+            white-space: nowrap;
         }
         .btn-use { background-color: var(--color-blue); color: white; }
         .btn-use:hover { background-color: #357ABD; }
@@ -95,14 +111,15 @@
             <table>
                 <thead>
                     <tr>
-                        <th width="10%" class="text-center">ลำดับคิว</th>
-                        <th width="30%">เลขครุภัณฑ์ / Serial Number</th>
-                        <th width="35%">วันที่ออกไปเตรียมเครื่องล่าสุด</th>
-                        <th width="25%" class="text-center">การจัดการ</th>
+                        <th width="8%" class="text-center">ลำดับคิว</th>
+                        <th width="22%">เลขครุภัณฑ์ / Serial Number</th>
+                        <th width="25%">วันที่ออกไปเตรียมเครื่องล่าสุด</th>
+                        <th width="20%">ผ่านการเตรียมมาแล้ว (วัน)</th>
+                        <th width="25%" class="text-center">เลือกวันที่และกดบันทึก</th>
                     </tr>
                 </thead>
                 <tbody id="use-list">
-                    <tr><td colspan="4" class="text-center">กำลังโหลดข้อมูลคิวใช้งาน...</td></tr>
+                    <tr><td colspan="5" class="text-center">กำลังโหลดข้อมูลคิวใช้งาน...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -114,11 +131,11 @@
             <table class="table-red">
                 <thead>
                     <tr>
-                        <th width="10%" class="text-center">ลำดับ</th>
-                        <th width="30%">เลขครุภัณฑ์ / Serial Number</th>
+                        <th width="8%" class="text-center">ลำดับ</th>
+                        <th width="27%">เลขครุภัณฑ์ / Serial Number</th>
                         <th width="25%">วันที่ชาร์จล่าสุด</th>
                         <th width="20%">ไม่ได้ชาร์จมาแล้ว</th>
-                        <th width="15%" class="text-center">การจัดการ</th>
+                        <th width="20%" class="text-center">เลือกวันที่และกดบันทึก</th>
                     </tr>
                 </thead>
                 <tbody id="charge-list">
@@ -132,6 +149,14 @@
         // ⭐️ นำ API URL จาก Google Sheets มาวางตรงนี้เหมือนเดิมครับ ⭐️
         const API_URL = 'https://script.google.com/macros/s/AKfycbxUISoKM4RLt5T9dnjN86-Q5WCEbytq5GhHJArvP3Azv0FhhYemSYvi9IbU6cVd2-R3Lw/exec';
 
+        // ฟังก์ชันช่วยหาค่าวันที่ของวันนี้ในรูปแบบ YYYY-MM-DD สำหรับใส่ในช่องกรอกวันที่เริ่มต้น
+        function getTodayString() {
+            const today = new Date();
+            const offset = today.getTimezoneOffset();
+            const localToday = new Date(today.getTime() - (offset * 60 * 1000));
+            return localToday.toISOString().split('T')[0];
+        }
+
         async function fetchData() {
             try {
                 const response = await fetch(API_URL + "?t=" + new Date().getTime());
@@ -142,25 +167,34 @@
             }
         }
 
-        // ฟังก์ชันเมื่อผู้ใช้กดปุ่ม + เพิ่ม Pop-up แจ้งเตือนยืนยัน
-        async function actionUpdate(assetId, actionType, buttonElement) {
-            const confirmMsg = actionType === 'use' 
-                ? `ยืนยันนำเครื่องเลขครุภัณฑ์ [ ${assetId} ] ไปต่อเตรียมไว้ใช่หรือไม่?`
-                : `ยืนยันการเสียบชาร์จกระตุ้นแบตเตอรี่ เครื่องเลขครุภัณฑ์ [ ${assetId} ] ใช่หรือไม่?`;
+        // ปรับปรุงฟังก์ชันบันทึกข้อมูลดึงวันที่จาก input
+        async function actionUpdate(assetId, actionType, buttonElement, inputId) {
+            const dateInput = document.getElementById(inputId);
+            const selectedDate = dateInput.value;
 
-            // 1. หน้าต่าง Pop-up ยืนยันการกด
-            if (!confirm(confirmMsg)) {
-                return; // ถ้าผู้ใช้กด ยกเลิก (Cancel) ให้หยุดทำงาน ไม่บันทึกข้อมูล
+            if(!selectedDate) {
+                alert("กรุณาเลือกวันที่ก่อนกดบันทึก");
+                return;
             }
+
+            // แปลงวันที่แสดงในกล่องแจ้งเตือนให้เป็นแบบไทย
+            const displayDate = new Date(selectedDate).toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric' });
+            
+            const confirmMsg = actionType === 'use' 
+                ? `ยืนยันบันทึกว่าเครื่อง [ ${assetId} ] ถูกนำไปเตรียมเครื่อง ณ วันที่ ${displayDate} ใช่หรือไม่?`
+                : `ยืนยันบันทึกว่าเครื่อง [ ${assetId} ] ได้รับการชาร์จ ณ วันที่ ${displayDate} ใช่หรือไม่?`;
+
+            if (!confirm(confirmMsg)) return;
 
             const originalText = buttonElement.innerText;
             buttonElement.innerText = "กำลังบันทึก...";
             buttonElement.disabled = true;
 
             try {
-                const targetUrl = `${API_URL}?action=${actionType}&id=${assetId}`;
+                // ส่งทั้ง action, id และ date ที่ผู้ใช้เลือกไปที่ Google Sheets
+                const targetUrl = `${API_URL}?action=${actionType}&id=${assetId}&date=${selectedDate}`;
                 await fetch(targetUrl);
-                await fetchData(); // โหลดตารางใหม่ ลำดับจะสลับอัตโนมัติ
+                await fetchData(); 
             } catch (error) {
                 alert("เกิดข้อผิดพลาดในการบันทึกข้อมูล กรุณาลองใหม่");
                 buttonElement.innerText = originalText;
@@ -168,7 +202,6 @@
             }
         }
 
-        // คำนวณหาค่า Timestamp เพื่อเรียงลำดับ (เครื่องไม่มีประวัติ/ค่าว่าง จะได้ค่า 0 เพื่อให้อยู่บนสุด)
         function getTimestamp(dateString) {
             if (!dateString) return 0;
             const d = new Date(dateString);
@@ -187,8 +220,10 @@
             return diffDays > 0 ? diffDays : 0;
         }
 
-        function formatDate(dateString) {
-            if (!dateString) return "ยังไม่มีประวัติการเตรียมเครื่อง (เครื่องใหม่)";
+        function formatDate(dateString, type) {
+            if (!dateString) {
+                return type === 'use' ? "ยังไม่เคยเตรียม (เครื่องใหม่)" : "ไม่มีประวัติ";
+            }
             const d = new Date(dateString);
             if (isNaN(d)) return dateString;
             return d.toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric' });
@@ -197,10 +232,10 @@
         function processData(data) {
             const readyMachines = data.filter(m => m.Status === 'Ready' || m.Status === '');
 
-            // เรียงลำดับใช้งาน: ใครเตรียมไว้นานสุด (Timestamp น้อยสุด) ขึ้นก่อน วันนี้ (Timestamp มากสุด) ตกไปล่างสุด
-            const useFirst = [...readyMachines].sort((a, b) => getTimestamp(a.StartDate) - getTimestamp(b.StartDate));
+            // คำนวณวันสำหรับตารางใช้งานด้วย
+            const useData = readyMachines.map(m => ({ ...m, daysSinceUse: getDaysSince(m.StartDate) }));
+            const useFirst = useData.sort((a, b) => getTimestamp(a.StartDate) - getTimestamp(b.StartDate));
             
-            // เรียงลำดับชาร์จ
             const chargeData = readyMachines.map(m => ({ ...m, daysSinceCharge: getDaysSince(m.LastCharged) }));
             const chargeFirst = chargeData.sort((a, b) => b.daysSinceCharge - a.daysSinceCharge);
 
@@ -213,13 +248,14 @@
             tbody.innerHTML = '';
             
             if(items.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="4" class="text-center">ไม่มีเครื่องช่วยหายใจพร้อมใช้งาน</td></tr>'; return;
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center">ไม่มีเครื่องช่วยหายใจพร้อมใช้งาน</td></tr>'; return;
             }
+
+            const todayStr = getTodayString();
 
             items.forEach((item, index) => {
                 const tr = document.createElement('tr');
                 
-                // ตรวจสอบว่าเครื่องนี้พึ่งถูกกดบันทึกการเตรียมไป "วันนี้" หรือไม่
                 let isPreppedToday = false;
                 if (item.StartDate) {
                     const today = new Date().toDateString();
@@ -227,20 +263,23 @@
                     isPreppedToday = (today === targetDate);
                 }
 
-                // ถ้าเตรียมแล้ววันนี้ ให้ใส่คลาสเปลี่ยนสีไฮไลท์แถวเป็นฟ้าพาสเทล
-                if (isPreppedToday) {
-                    tr.className = 'prepped-row';
-                }
+                if (isPreppedToday) tr.className = 'prepped-row';
+
+                let daysText = item.daysSinceUse === 9999 ? "-" : `${item.daysSinceUse} วัน`;
+                const inputId = `date-use-${item.AssetID}`;
 
                 tr.innerHTML = `
                     <td class="text-center"><strong>${index + 1}</strong></td>
                     <td><strong>${item.AssetID || '-'}</strong><br><small style="color:#777;">SN: ${item.SerialNumber || '-'}</small></td>
-                    <td>${formatDate(item.StartDate)}</td>
+                    <td>${formatDate(item.StartDate, 'use')}</td>
+                    <td><span class="${item.daysSinceUse !== 9999 ? 'badge-blue' : ''}">${daysText}</span></td>
                     <td class="text-center">
-                        ${isPreppedToday 
-                            ? '<span class="badge-gray">เตรียมเครื่องแล้ววันนี้</span>' 
-                            : `<button class="btn btn-use" onclick="actionUpdate('${item.AssetID}', 'use', this)">เจ้าหน้าที่นำไปต่อเตรียมเครื่อง</button>`
-                        }
+                        <div class="action-flex">
+                            <input type="date" id="${inputId}" class="date-input" value="${todayStr}">
+                            <button class="btn btn-use" onclick="actionUpdate('${item.AssetID}', 'use', this, '${inputId}')">
+                                ${isPreppedToday ? 'แก้ไข/บันทึก' : 'บันทึกเตรียมเครื่อง'}
+                            </button>
+                        </div>
                     </td>
                 `;
                 tbody.appendChild(tr);
@@ -255,21 +294,28 @@
                 tbody.innerHTML = '<tr><td colspan="5" class="text-center">ไม่มีข้อมูล</td></tr>'; return;
             }
 
+            const todayStr = getTodayString();
+
             items.forEach((item, index) => {
                 const isUrgent = index < 3 && item.daysSinceCharge > 0 && item.daysSinceCharge !== 9999; 
                 const tr = document.createElement('tr');
                 if(isUrgent) tr.className = 'urgent-row';
+                
                 let daysText = item.daysSinceCharge === 9999 ? "ไม่มีประวัติ" : `${item.daysSinceCharge} วัน`;
+                const inputId = `date-charge-${item.AssetID}`;
 
                 tr.innerHTML = `
                     <td class="text-center"><strong>${index + 1}</strong></td>
                     <td><strong>${item.AssetID || '-'}</strong><br><small style="color:#777;">SN: ${item.SerialNumber || '-'}</small></td>
-                    <td>${item.LastCharged ? new Date(item.LastCharged).toLocaleDateString('th-TH', {year:'numeric', month:'short', day:'numeric'}) : '-'}</td>
+                    <td>${formatDate(item.LastCharged, 'charge')}</td>
                     <td style="color:${isUrgent ? 'var(--color-red)' : 'inherit'}; font-weight:${isUrgent ? '600' : 'normal'}">
                         ${daysText} ${isUrgent ? '<span class="badge-red" style="margin-left:10px;">ด่วน</span>' : ''}
                     </td>
                     <td class="text-center">
-                        <button class="btn btn-charge" onclick="actionUpdate('${item.AssetID}', 'charge', this)">เสียบชาร์จวันนี้</button>
+                        <div class="action-flex">
+                            <input type="date" id="${inputId}" class="date-input" value="${todayStr}">
+                            <button class="btn btn-charge" onclick="actionUpdate('${item.AssetID}', 'charge', this, '${inputId}')">บันทึกชาร์จ</button>
+                        </div>
                     </td>
                 `;
                 tbody.appendChild(tr);
