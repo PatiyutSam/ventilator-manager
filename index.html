@@ -10,8 +10,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
-        :root { var(--color-cream): #FDFBF7; --color-blue: #4A90E2; --color-red: #E74C3C; --text-dark: #333333; }
-        body { font-family: 'Prompt', sans-serif; background-color: #FDFBF7; color: var(--text-dark); margin: 0; padding: 30px; }
+        :root { --color-cream: #FDFBF7; --color-blue: #4A90E2; --color-red: #E74C3C; --text-dark: #333333; }
+        body { font-family: 'Prompt', sans-serif; background-color: var(--color-cream); color: var(--text-dark); margin: 0; padding: 30px; }
 
         .header-container { display: flex; align-items: center; margin-bottom: 20px; background-color: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-top: 5px solid var(--color-blue); }
         .hospital-logo { width: 80px; height: 80px; object-fit: contain; margin-right: 20px; }
@@ -218,13 +218,19 @@
             return `${years > 0 ? years + ' ปี ' : ''}${months > 0 ? months + ' เดือน' : ''}`;
         }
 
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str ?? '';
+            return div.innerHTML;
+        }
+
         function getDaysSince(dateString) {
             if (!dateString) return 9999;
             const targetDate = new Date(dateString);
             if (isNaN(targetDate)) return 9999;
             const today = new Date();
             today.setHours(0,0,0,0); targetDate.setHours(0,0,0,0);
-            return Math.floor((today - targetDate) / (1000 * 60 * 60 * 24));
+            return Math.max(0, Math.floor((today - targetDate) / (1000 * 60 * 60 * 24)));
         }
 
         function formatDate(dateString, type) {
@@ -287,7 +293,7 @@
         async function actionUpdate(assetId, actionType, buttonElement, inputId) {
             const selectedDate = document.getElementById(inputId).value;
             if(!selectedDate) { alert("กรุณาเลือกวันที่"); return; }
-            if (!confirm(`ยืนยันการบันทึกข้อมูลใช่หรือไม่?`)) return;
+            if (!confirm(`ยืนยันการบันทึกข้อมูลวันที่ ${formatDate(selectedDate, 'use')} ใช่หรือไม่?`)) return;
 
             const originalText = buttonElement.innerText;
             buttonElement.innerText = "กำลังบันทึก..."; buttonElement.disabled = true;
@@ -300,8 +306,8 @@
 
         function getMachineInfoHTML(item) {
             return `
-                <strong>${item.AssetID || '-'}</strong> <small style="color:#666;">(SN: ${item.SerialNumber || '-'})</small>
-                <span class="info-text" style="color:var(--color-blue); font-weight:500;">📝 รุ่น: ${item.Model || 'ยังไม่ระบุรุ่น'}</span>
+                <strong>${escapeHtml(item.AssetID) || '-'}</strong> <small style="color:#666;">(SN: ${escapeHtml(item.SerialNumber) || '-'})</small>
+                <span class="info-text" style="color:var(--color-blue); font-weight:500;">📝 รุ่น: ${escapeHtml(item.Model) || 'ยังไม่ระบุรุ่น'}</span>
                 <span class="info-text">⚙️ อายุเครื่อง: ${calculateAgeText(item.ReceiveDate)} | 🔋 อายุแบต: ${calculateAgeText(item.BatteryDate)}</span>
                 <button class="btn btn-edit" onclick="openModal('${item.AssetID}')">✏️ แก้ไขข้อมูล / รุ่น</button>
             `;
@@ -342,7 +348,7 @@
                     <td>${statusBadge}</td>
                     <td class="text-center">
                         <div class="action-flex">
-                            <input type="date" id="${inputId}" class="date-input" value="${todayStr}">
+                            <input type="date" id="${inputId}" class="date-input" value="${todayStr}" max="${todayStr}">
                             <button class="btn btn-use" onclick="actionUpdate('${item.AssetID}', 'use', this, '${inputId}')">บันทึกเตรียม</button>
                         </div>
                     </td>
@@ -368,7 +374,7 @@
                     <td>${getAlertBadge(item.daysSinceCharge)}</td>
                     <td class="text-center">
                         <div class="action-flex">
-                            <input type="date" id="${inputId}" class="date-input" value="${todayStr}">
+                            <input type="date" id="${inputId}" class="date-input" value="${todayStr}" max="${todayStr}">
                             <button class="btn btn-charge" onclick="actionUpdate('${item.AssetID}', 'charge', this, '${inputId}')">บันทึกชาร์จ</button>
                         </div>
                     </td>
@@ -385,10 +391,10 @@
             items.forEach(item => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td><strong>${item.AssetID || '-'}</strong><br><small style="color:var(--color-blue)">รุ่น: ${item.Model || '-'}</small><br><small style="color:#777;">SN: ${item.SerialNumber || '-'}</small></td>
-                    <td><span class="status-badge status-broken">ชำรุด</span><br><span style="color:var(--color-red); font-weight:500;">${item.Symptom || 'ไม่ระบุอาการ'}</span></td>
+                    <td><strong>${escapeHtml(item.AssetID) || '-'}</strong><br><small style="color:var(--color-blue)">รุ่น: ${escapeHtml(item.Model) || '-'}</small><br><small style="color:#777;">SN: ${escapeHtml(item.SerialNumber) || '-'}</small></td>
+                    <td><span class="status-badge status-broken">ชำรุด</span><br><span style="color:var(--color-red); font-weight:500;">${escapeHtml(item.Symptom) || 'ไม่ระบุอาการ'}</span></td>
                     <td><span class="info-text">อายุเครื่อง: ${calculateAgeText(item.ReceiveDate)}</span><span class="info-text">อายุแบต: ${calculateAgeText(item.BatteryDate)}</span></td>
-                    <td class="text-center"><button class="btn btn-edit" onclick="openModal('${item.AssetID}')">✏️ อัปเดตสถานะ</button></td>
+                    <td class="text-center"><button class="btn btn-edit" onclick="openModal('${escapeHtml(item.AssetID)}')">✏️ อัปเดตสถานะ</button></td>
                 `;
                 tbody.appendChild(tr);
             });
